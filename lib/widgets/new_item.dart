@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shooper/data/categories.dart';
 import 'package:shooper/data/models/category.dart';
 import 'package:shooper/data/models/grocery_item.dart';
+import 'package:http/http.dart' as http;
 
 class NewItem extends StatefulWidget {
   const NewItem({super.key});
@@ -19,14 +22,25 @@ class _NewItemState extends State<NewItem> {
     if (_formkey.currentState!.validate()) ;
     {
       _formkey.currentState!.save();
-      Navigator.of(context).pop(
-        GroceryItem(
-          id: DateTime.now().toString(),
-          name: _enteredName,
-          quantity: _enteredQuantity,
-          category: _selectedCategory,
-        ),
-      );
+      final url = Uri.https(
+          'shooper-58945-default-rtdb.firebaseio.com', 'shooper.json');
+      http.post(url,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: json.encode({
+            'name': _enteredName,
+            'quantity': _enteredQuantity,
+            'category': _selectedCategory.title,
+          }));
+      // Navigator.of(context).pop(
+      //   // GroceryItem(
+      //   //   id: DateTime.now().toString(),
+      //   //   name: _enteredName,
+      //   //   quantity: _enteredQuantity,
+      //   //   category: _selectedCategory,
+      //   // ),
+      // );
     }
   }
 
