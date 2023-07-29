@@ -18,22 +18,31 @@ class _NewItemState extends State<NewItem> {
   var _enteredName = '';
   var _enteredQuantity = 1;
   var _selectedCategory = categories[Categories.vegetables]!;
-  void _saveItem() {
+  void _saveItem() async {
     if (_formkey.currentState!.validate()) ;
     {
       _formkey.currentState!.save();
       final url = Uri.https(
           'shooper-58945-default-rtdb.firebaseio.com', 'shooper.json');
-      http.post(url,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: json.encode({
+      final respose = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(
+          {
             'name': _enteredName,
             'quantity': _enteredQuantity,
             'category': _selectedCategory.title,
-          }));
-      // Navigator.of(context).pop(
+          },
+        ),
+      );
+      print(respose.body);
+      print(respose.statusCode);
+      if (!context.mounted) {
+        return;
+      }
+      Navigator.of(context).pop();
       //   // GroceryItem(
       //   //   id: DateTime.now().toString(),
       //   //   name: _enteredName,
