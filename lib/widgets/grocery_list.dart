@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shooper/data/categories.dart';
-import 'package:shooper/data/dummy_data.dart';
+//import 'package:shooper/data/dummy_data.dart';
 import 'package:shooper/data/models/grocery_item.dart';
 import 'package:shooper/widgets/new_item.dart';
 import 'package:http/http.dart' as http;
@@ -16,6 +16,7 @@ class GroceryList extends StatefulWidget {
 
 class _GroceryListState extends State<GroceryList> {
   List<GroceryItem> _groceryItems = [];
+  var _isLoading = true;
 
   @override
   //to intialize the _loaditems method
@@ -49,6 +50,7 @@ class _GroceryListState extends State<GroceryList> {
     //to override the locally avaliable data of _groceryItems
     setState(() {
       _groceryItems = loadedItems;
+      _isLoading = false;
     });
   }
 
@@ -77,6 +79,11 @@ class _GroceryListState extends State<GroceryList> {
   @override
   Widget build(BuildContext context) {
     Widget content = const Center(child: Text('No items added yet.'));
+    if (_isLoading) {
+      content = const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
 
     if (_groceryItems.isNotEmpty) {
       content = ListView.builder(
