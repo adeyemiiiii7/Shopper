@@ -30,7 +30,7 @@ class _GroceryListState extends State<GroceryList> {
     final response = await http.get(url);
     //use json.decode to convert a map back
     //add dynamic because it has numbers
-    final Map<String, Map<String, dynamic>> listData =
+    final Map<String, dynamic> listData =
         json.decode(response.body);
     final List<GroceryItem> _loadedItems = [];
     for (final item in listData.entries) {
