@@ -37,21 +37,31 @@ class _NewItemState extends State<NewItem> {
           },
         ),
       );
-      print(respose.body);
-      print(respose.statusCode);
+      // print(respose.body);
+      // print(respose.statusCode);
+      final Map<String, dynamic> resData = json.decode(respose.body);
+
       if (!context.mounted) {
         return;
       }
-      Navigator.of(context).pop();
-      //   // GroceryItem(
-      //   //   id: DateTime.now().toString(),
-      //   //   name: _enteredName,
-      //   //   quantity: _enteredQuantity,
-      //   //   category: _selectedCategory,
-      //   // ),
-      // );
+
+      Navigator.of(context).pop(
+        GroceryItem(
+          id: resData['name'],
+          name: _enteredName,
+          quantity: _enteredQuantity,
+          category: _selectedCategory,
+        ),
+      );
     }
   }
+  //   // GroceryItem(
+  //   //   id: DateTime.now().toString(),
+  //   //   name: _enteredName,
+  //   //   quantity: _enteredQuantity,
+  //   //   category: _selectedCategory,
+  //   // ),
+  //
 
   @override
   Widget build(BuildContext context) {
