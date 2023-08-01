@@ -28,12 +28,15 @@ class _GroceryListState extends State<GroceryList> {
 
   void _loadItems() async {
     final url =
-        // Uri.https('shooper-58945-default-rtdb.firebaseio.com', 'shooper.json');
-        Uri.https('abc.firebaseio.com', 'shooper.json');
+        Uri.https('shooper-58945-default-rtdb.firebaseio.com', 'shooper.json');
+    //Uri.https('abc.firebaseio.com', 'shooper.json');
     final response = await http.get(url);
-    print(response.statusCode);
+    //print(response.statusCode);
+
     if (response.statusCode >= 400) {
-      _error = 'Failed to fetch data, pls try again later......';
+      setState(() {
+        _error = 'Failed to fetch data, pls try again later......';
+      });
     }
     //use json.decode to convert a map back
     //add dynamic because it has numbers
@@ -77,6 +80,9 @@ class _GroceryListState extends State<GroceryList> {
   }
 
   void _removeItem(GroceryItem item) {
+    final url = Uri.https(
+        'shooper-58945-default-rtdb.firebaseio.com', 'shooper/${item.id}.json');
+    http.delete(url);
     setState(() {
       _groceryItems.remove(item);
     });
