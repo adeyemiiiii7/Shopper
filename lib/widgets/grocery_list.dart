@@ -17,6 +17,7 @@ class GroceryList extends StatefulWidget {
 class _GroceryListState extends State<GroceryList> {
   List<GroceryItem> _groceryItems = [];
   var _isLoading = true;
+  String? _error;
 
   @override
   //to intialize the _loaditems method
@@ -27,8 +28,13 @@ class _GroceryListState extends State<GroceryList> {
 
   void _loadItems() async {
     final url =
-        Uri.https('shooper-58945-default-rtdb.firebaseio.com', 'shooper.json');
+        // Uri.https('shooper-58945-default-rtdb.firebaseio.com', 'shooper.json');
+        Uri.https('abc.firebaseio.com', 'shooper.json');
     final response = await http.get(url);
+    print(response.statusCode);
+    if (response.statusCode >= 400) {
+      _error = 'Failed to fetch data, pls try again later......';
+    }
     //use json.decode to convert a map back
     //add dynamic because it has numbers
     final Map<String, dynamic> listData = json.decode(response.body);
@@ -105,6 +111,11 @@ class _GroceryListState extends State<GroceryList> {
             ),
           ),
         ),
+      );
+    }
+    if (_error != null) {
+      content = Center(
+        child: Text(_error!),
       );
     }
 

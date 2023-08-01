@@ -116,7 +116,7 @@ class _NewItemState extends State<NewItem> {
                             return 'Must be a valid, positive number.';
                           }
                           return null;
-                          //                         int.tryParse(value) == null: This condition attempts to parse the input value as an integer using int.tryParse().
+                          //                    int.tryParse(value) == null: This condition attempts to parse the input value as an integer using int.tryParse().
                           // If the parsing fails (i.e., the value is not a valid integer), this condition evaluates to true.
                           // int.tryParse(value)! <= 0: This condition checks if the input value, after successful parsing, is less than or equal to 0.
                         },
@@ -171,7 +171,12 @@ class _NewItemState extends State<NewItem> {
                     ),
                     ElevatedButton(
                       onPressed: _isSending ? null : _saveItem,
-                      child: const Text('Add Item'),
+                      child: _isSending
+                          ? const SizedBox(
+                              height: 16,
+                              width: 16,
+                              child: CircularProgressIndicator())
+                          : const Text('Add Item'),
                     )
                   ],
                 ),
