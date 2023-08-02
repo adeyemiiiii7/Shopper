@@ -104,20 +104,16 @@ class _GroceryListState extends State<GroceryList> {
     final response = await http.delete(url);
 
     if (response.statusCode >= 400) {
-      setState(() {
-        _groceryItems.insert(index, item);
-      });
+      throw Exception('Failed To Fetch Grocery Items, Try Again Later!');
+      // setState(() {
+      //   _groceryItems.insert(index, item);
+      // });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     Widget content = const Center(child: Text('No items added yet.'));
-    if (_isLoading) {
-      content = const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
 
     if (_groceryItems.isNotEmpty) {
       content = ListView.builder(
@@ -141,11 +137,11 @@ class _GroceryListState extends State<GroceryList> {
         ),
       );
     }
-    if (_error != null) {
-      content = Center(
-        child: Text(_error!),
-      );
-    }
+    // if (_error != null) {
+    //   content = Center(
+    //     child: Text(_error!),
+    //   );
+    // }
 
     return Scaffold(
       appBar: AppBar(
@@ -157,8 +153,20 @@ class _GroceryListState extends State<GroceryList> {
           ),
         ],
       ),
-      body:
-          FutureBuilder(future: _loadedItems, builder: (context, snapshot) {}),
+      body: FutureBuilder(
+          future: _loadedItems,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(_error!),
+              );
+            }
+          }),
     );
   }
 }
