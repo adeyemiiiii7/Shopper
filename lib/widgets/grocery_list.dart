@@ -18,7 +18,7 @@ class _GroceryListState extends State<GroceryList> {
   List<GroceryItem> _groceryItems = [];
   // var _isLoading = true;
   late Future<List<GroceryItem>> _loadedItems;
-  String? _error;
+  //String? _error;
 
   @override
   //to intialize the _loaditems method
@@ -36,7 +36,8 @@ class _GroceryListState extends State<GroceryList> {
 
     if (response.statusCode >= 400) {
       setState(() {
-        _error = 'Failed to fetch data, pls try again later......';
+        //  _error = 'Failed to fetch data, pls try again later......';
+        throw Exception('Failed to fetch data, pls try again later......');
       });
     }
     if (response.body == 'null') {
@@ -113,36 +114,7 @@ class _GroceryListState extends State<GroceryList> {
 
   @override
   Widget build(BuildContext context) {
-    Widget content = const Center(child: Text('No items added yet.'));
-
-    if (_groceryItems.isNotEmpty) {
-      content = ListView.builder(
-        itemCount: _groceryItems.length,
-        itemBuilder: (ctx, index) => Dismissible(
-          onDismissed: (direction) {
-            _removeItem(_groceryItems[index]);
-          },
-          key: ValueKey(_groceryItems[index].id),
-          child: ListTile(
-            title: Text(_groceryItems[index].name),
-            leading: Container(
-              width: 24,
-              height: 24,
-              color: _groceryItems[index].category.color,
-            ),
-            trailing: Text(
-              _groceryItems[index].quantity.toString(),
-            ),
-          ),
-        ),
-      );
-    }
-    // if (_error != null) {
-    //   content = Center(
-    //     child: Text(_error!),
-    //   );
-    // }
-
+    //  Widget content = const Center(child: Text('No items added yet.'));
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Groceries'),
@@ -163,9 +135,32 @@ class _GroceryListState extends State<GroceryList> {
             }
             if (snapshot.hasError) {
               return Center(
-                child: Text(_error!),
+                child: Text(snapshot.error.toString()),
               );
             }
+            if (snapshot.data!.isEmpty) {
+              return const Center(child: Text('No items added yet.'));
+            }
+            return ListView.builder(
+              itemCount: _groceryItems.length,
+              itemBuilder: (ctx, index) => Dismissible(
+                onDismissed: (direction) {
+                  _removeItem(_groceryItems[index]);
+                },
+                key: ValueKey(_groceryItems[index].id),
+                child: ListTile(
+                  title: Text(_groceryItems[index].name),
+                  leading: Container(
+                    width: 24,
+                    height: 24,
+                    color: _groceryItems[index].category.color,
+                  ),
+                  trailing: Text(
+                    _groceryItems[index].quantity.toString(),
+                  ),
+                ),
+              ),
+            );
           }),
     );
   }
