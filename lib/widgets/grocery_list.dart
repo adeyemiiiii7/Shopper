@@ -90,25 +90,41 @@ class _GroceryListState extends State<GroceryList> {
       return;
     }
     setState(() {
-      _groceryItems.add(newItem);
+      _loadedItems = _loadedItems.then((items) {
+        items.add(newItem);
+        return items;
+      });
     });
   }
 
   void _removeItem(GroceryItem item) async {
-    //handle errors for emoving the item incase the url for the deleteing the items are wrong
-    final index = _groceryItems.indexOf(item);
+    final index = (await _loadedItems).indexOf(item);
     setState(() {
-      _groceryItems.remove(item);
+      _loadedItems = _loadedItems.then((items) {
+        items.remove(item);
+        return items;
+      });
     });
+
     final url = Uri.https(
-        'shooper-58945-default-rtdb.firebaseio.com', 'shooper/${item.id}.json');
+      'shooper-58945-default-rtdb.firebaseio.com',
+      'shooper/${item.id}.json',
+    );
     final response = await http.delete(url);
 
     if (response.statusCode >= 400) {
-      throw Exception('Failed To Fetch Grocery Items, Try Again Later!');
-      // setState(() {
-      //   _groceryItems.insert(index, item);
-      // });
+      setState(() {
+        _loadedItems = _loadedItems.then((items) {
+          items.insert(index, item);
+          return items;
+        });
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to remove item. Please try again later.'),
+          duration: Duration(seconds: 3),
+        ),
+      );
     }
   }
 
@@ -142,21 +158,21 @@ class _GroceryListState extends State<GroceryList> {
               return const Center(child: Text('No items added yet.'));
             }
             return ListView.builder(
-              itemCount: _groceryItems.length,
+              itemCount: snapshot.data!.length,
               itemBuilder: (ctx, index) => Dismissible(
                 onDismissed: (direction) {
-                  _removeItem(_groceryItems[index]);
+                  _removeItem(snapshot.data![index]);
                 },
-                key: ValueKey(_groceryItems[index].id),
+                key: ValueKey(snapshot.data![index].id),
                 child: ListTile(
-                  title: Text(_groceryItems[index].name),
+                  title: Text(snapshot.data![index].name),
                   leading: Container(
                     width: 24,
                     height: 24,
-                    color: _groceryItems[index].category.color,
+                    color: snapshot.data![index].category.color,
                   ),
                   trailing: Text(
-                    _groceryItems[index].quantity.toString(),
+                    snapshot.data![index].quantity.toString(),
                   ),
                 ),
               ),
